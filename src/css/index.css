@@ -1,0 +1,106 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+* input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+* input[type=number] {
+  -moz-appearance: textfield;
+}
+
+:root {
+  --text: #ddeaf7;
+  --background: #07121e;
+  --primary: #88b8e3;
+  --secondary: #291d7c;
+  --accent: #724cd5;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 30% 70%;
+  justify-items: center;
+  align-items: center;
+}
+.container form {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 60% 15% 25%;
+  align-items: center;
+  justify-items: center;
+}
+.container form .timer {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 1fr 1fr 1fr;
+  align-items: center;
+}
+.container form .timer div {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+.container form .timer div input {
+  border: none;
+  border-radius: 10px;
+  background-color: var(--text);
+  height: 2.5rem;
+  width: 2.5rem;
+  text-align: center;
+}
+.container form .timer div input:focus {
+  outline: none;
+  border: none;
+}
+.container form .timer div button {
+  background-color: var(--primary);
+  padding: 0.3rem;
+  margin: 0 0.5rem;
+  border: none;
+  border-radius: 10px;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+}
+.container form .timer div button:hover {
+  scale: 1.1;
+}
+.container form .timer div button:active {
+  scale: 1.15;
+}
+.container form .timer p {
+  margin-left: 0.5rem;
+}
+.container form .path {
+  align-self: flex-start;
+  text-align: center;
+}
+.container form .path button {
+  padding: 0.6rem 1rem;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 1rem;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+}
+.container form .path button:hover {
+  scale: 1.1;
+}
+.container form .path button:active {
+  scale: 1.15;
+}
+.container form .path p {
+  padding-top: 0.3rem;
+  font-size: 0.9rem;
+}
+
+/*# sourceMappingURL=index.css.map */

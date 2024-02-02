@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="src/css/index.css">
+        <script src="https://kit.fontawesome.com/d90e43a863.js" crossorigin="anonymous"></script>
+
+        <script type="module" src="/src/main.ts" defer></script>
+
+        <title>Tauri App</title>
+    </head>
+
+    <body>
+        <div class="container">
+            <h2>TimeTunes</h2>
+
+            <form>
+                <div class="timer">
+                    <div class="hours-div">
+                        <button type="button" id="hours-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <input type="number" id="hours-input" value="0" placeholder="h" required>
+                        <button type="button" id="hours-down"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+
+                    <p>Hours</p>
+
+                    <div class="minutes-div">
+                        <button type="button" id="minutes-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <input type="number" id="minutes-input" value="0" placeholder="m" required>
+                        <button type="button" id="minutes-down"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+
+                    <p>Minutes</p>
+
+                    <div class="seconds-div">
+                        <button type="button" id="seconds-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <input type="number" id="seconds-input" value="0" placeholder="s" required>
+                        <button type="button" id="seconds-down"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+
+                    <p>Seconds</p>
+                </div>
+
+                <div class="path">
+                    <button id="choose-folder" type="button">Choose folder</button>
+                    <pc id="choose-folder-txt"></p>
+                </div>
+
+
+                <button type="submit">
+                    Lets go!!
+                </button>
+            </form>
+        </div>
+    </body>
+</html>
