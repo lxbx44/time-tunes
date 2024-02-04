@@ -1,15 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 * {
   margin: 0;
   padding: 0;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
 }
-
 * input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+* input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Firefox */
 * input[type=number] {
   -moz-appearance: textfield;
 }
@@ -101,6 +101,20 @@ input::-webkit-inner-spin-button {
 .container form .path p {
   padding-top: 0.3rem;
   font-size: 0.9rem;
+}
+.container form .submit-button {
+  background-color: var(--primary);
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+}
+.container form .submit-button:hover {
+  box-shadow: 0 0 5px 2px var(--primary);
+  scale: 1.1;
+}
+.container form .submit-button:active {
+  scale: 1.15;
 }
 
 /*# sourceMappingURL=index.css.map */

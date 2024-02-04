@@ -129,3 +129,45 @@ folderButton?.addEventListener('mouseleave', () => {
         }
     }
 });
+
+
+
+// submit form
+
+let mainform: HTMLFormElement | null = document.querySelector('main-form');
+
+mainform?.addEventListener('submit', () => {
+    console.log("a")
+    let hours: HTMLInputElement | null = document.querySelector('hours-input')
+    let minutes: HTMLInputElement | null = document.querySelector('minutes-input');
+    let seconds: HTMLInputElement | null = document.querySelector('seconds-input');
+
+    if (
+        hours?.valueAsNumber === undefined ||
+        minutes?.valueAsNumber === undefined ||
+        seconds?.valueAsNumber === undefined
+    ) { return; }
+
+    let h_sec: number | undefined = hours.valueAsNumber * 60 * 60;
+    let m_sec: number | undefined = hours.valueAsNumber * 60;
+    let s_sec: number | undefined = hours.valueAsNumber;
+
+    if (h_sec === undefined) {
+        h_sec = 0;
+    }
+    
+    if (m_sec === undefined) {
+        m_sec = 0;
+    }
+
+    if (s_sec === undefined) {
+        s_sec = 0;
+    }
+
+    let total_time: number = h_sec + m_sec + s_sec
+
+    console.log(h_sec);
+    console.log(m_sec);
+    console.log(s_sec);
+    console.log(total_time);
+});
