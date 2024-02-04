@@ -2,7 +2,7 @@
 name = "time-tunes"
 version = "0.1.0"
 description = "Make the perfect playlist for any duration"
-authors = ["Aria, Slushee"]
+authors = ["Aria", "Slushee"]
 repository = "https://github.com/lxbx44/time-tunes"
 edition = "2021"
 
