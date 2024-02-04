@@ -8,13 +8,13 @@
     },
     "package": {
         "productName": "time-tunes",
-        "version": "0.0.0"
+        "version": "0.1.0"
     },
     "tauri": {
         "allowlist": {
-            "all": true,
+            "all": false,
             "shell": {
-                "all": true,
+                "all": false,
                 "open": true
             },
             "dialog": {
