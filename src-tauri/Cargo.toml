@@ -1,5 +1,5 @@
 [package]
-name = "time-tunes"
+name = "src_tauri"
 version = "0.1.0"
 description = "Make the perfect playlist for any duration"
 authors = ["Aria", "Slushee"]

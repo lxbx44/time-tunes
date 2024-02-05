@@ -2543,6 +2543,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "src_tauri"
+version = "0.1.0"
+dependencies = [
+ "lofty",
+ "rand 0.8.5",
+ "rayon",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "walkdir",
+]
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2989,20 +3003,6 @@ checksum = "7ba3a3ef41e6672a2f0f001392bb5dcd3ff0a9992d618ca761a11c3121547774"
 dependencies = [
  "num-conv",
  "time-core",
-]
-
-[[package]]
-name = "time-tunes"
-version = "0.1.0"
-dependencies = [
- "lofty",
- "rand 0.8.5",
- "rayon",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "walkdir",
 ]
 
 [[package]]
