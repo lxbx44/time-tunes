@@ -4,6 +4,17 @@ use std::{path::PathBuf, time::Duration};
 mod lib;
 use lib::{get_audio_files, h_greedy, random_list, swap};
 
+/// retrieves a list of music files according to the user provided settings
+///
+/// # Assumptions
+///  - `time` is an unsigned integer representing seconds
+///  - `path` is a string representing a valid path on the filesystem
+///
+/// # Missing fields:
+///  - `Depth` parameter (u32)
+///  - `Steps` parameter (u32)
+///  - `Loops` parameter (u8 ?)
+///  - `h` parameter (Heuristics function selector, enum? str?)
 #[tauri::command]
 fn get_playlist(time: u64, path: &str) -> Vec<String> {
     let audio_files = get_audio_files(&PathBuf::from(path));
