@@ -19,6 +19,7 @@ const LOOPS: usize = 1;
 ///  - `Steps` parameter
 ///  - `Loops` parameter
 ///  - `h` parameter
+
 #[tauri::command]
 fn get_playlist(time: u64, path: &str) -> Vec<String> {
     let audio_files = get_audio_files(&PathBuf::from(path));
@@ -29,7 +30,7 @@ fn get_playlist(time: u64, path: &str) -> Vec<String> {
     let steps = playlist.used_len() * STEPS_FACTOR / 100;
 
     for _ in 0..=LOOPS {
-        for i in 0..=steps {
+        for i in 0..steps {
             playlist.swap(i, depth, h_greedy);
         }
     }

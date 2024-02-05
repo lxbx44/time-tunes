@@ -17,9 +17,11 @@
 :root {
   --text: #ddeaf7;
   --background: #07121e;
+  --background2: #192432;
   --primary: #88b8e3;
   --secondary: #291d7c;
   --accent: #724cd5;
+  --red: #f9846b;
   background-color: var(--background);
   color: var(--text);
 }
@@ -73,6 +75,57 @@
   to {
     transform: rotate(1turn);
   }
+}
+
+.confirm {
+  height: 100vh;
+  width: 100vw;
+  display: none;
+  justify-items: center;
+  align-items: center;
+  grid-template-rows: 22% 55% 23%;
+}
+.confirm .confirm-title {
+  text-align: center;
+}
+.confirm .confirm-title p {
+  margin-top: 0.8rem;
+}
+.confirm #putsongshere {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+.confirm #putsongshere p {
+  width: calc(100% - 5rem);
+  margin: 0.7rem 2rem;
+  padding: 0.4rem 0.5rem;
+  background-color: var(--background2);
+  border-radius: 10px;
+}
+.confirm .confirm-btns {
+  display: flex;
+  flex-direction: column;
+}
+.confirm .confirm-btns button {
+  background-color: var(--primary);
+  border: none;
+  border-radius: 10px;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+}
+.confirm .confirm-btns button:hover {
+  scale: 1.1;
+}
+.confirm .confirm-btns button:active {
+  scale: 1.15;
+}
+.confirm .confirm-btns #confirm-stop {
+  background-color: var(--red);
+  margin-top: 1rem;
+  padding: 0.3rem;
+}
+.confirm .confirm-btns #confirm-ok {
+  padding: 1rem 1.5rem;
 }
 
 .container {

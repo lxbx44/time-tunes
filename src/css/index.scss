@@ -19,12 +19,13 @@
 :root {
     --text: #ddeaf7;
     --background: #07121e;
+    --background2: #192432;
     --primary: #88b8e3;
     --secondary: #291d7c;
     --accent: #724cd5;
+    --red: #f9846b;
 
     background-color: var(--background);
-
     color: var(--text);
 
 }
@@ -84,6 +85,62 @@
     @keyframes spin {
         to {
             transform: rotate(1turn);
+        }
+    }
+}
+
+.confirm {
+    height: 100vh;
+    width: 100vw;
+    display: none;
+    justify-items: center;
+    align-items: center;
+    grid-template-rows: 22% 55% 23%;
+
+    .confirm-title {
+        text-align: center;
+        p {
+            margin-top: 0.8rem;
+        }
+    }
+
+    #putsongshere {
+        height: 100%;
+        width: 100%;
+        overflow-y: scroll;
+        p {
+            width: calc(100% - 5rem);
+            margin: 0.7rem 2rem;
+            padding: 0.4rem 0.5rem;
+            background-color: var(--background2);
+            border-radius: 10px;
+        }
+    }
+
+    .confirm-btns {
+        display: flex;
+        flex-direction: column;
+
+        button {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+
+            &:hover {
+                scale: 1.1;
+            }
+            &:active {
+                scale: 1.15;
+            }
+        }
+        #confirm-stop {
+            background-color: var(--red);
+            margin-top: 1rem;
+            padding: 0.3rem;
+        }
+        #confirm-ok {
+            padding: 1rem 1.5rem;
         }
     }
 }

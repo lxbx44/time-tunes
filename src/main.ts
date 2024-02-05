@@ -247,8 +247,27 @@ form?.addEventListener('submit', (event: Event) => {
         invoke('get_playlist', {
             time: duration.to_seconds(),
             path: folderPath,
-        }).then((vect) => {
-            console.log(vect);
+        }).then((s: string[] | unknown) => {
+            let songs: string[] = s as string[];
+
+            let songsDiv: HTMLDivElement | null = document.querySelector('#putsongshere');
+            let songsDivParent: HTMLDivElement | null = document.querySelector('.confirm');
+            if (loader) {
+                loader.style.display = 'none';
+            }
+
+            let n: number = 1;
+            songs.forEach((song: string) => {
+                const p = document.createElement('p');
+                p.textContent = `${n}. ${song.split('/').slice(-1)[0]}`;
+                songsDiv?.appendChild(p);
+                n++;
+            });
+
+            if (songsDivParent) {
+                songsDivParent.style.display = 'grid';
+            }
+            
         });
     }, 500);
 });
