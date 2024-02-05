@@ -2544,7 +2544,7 @@ dependencies = [
 
 [[package]]
 name = "src_tauri"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lofty",
  "rand 0.8.5",

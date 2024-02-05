@@ -27,31 +27,6 @@ fn is_audio(entry: &DirEntry) -> bool {
     false
 }
 
-/// Creates a list with the paths and durations of music files which when combined roughly match
-/// the target duration. A naive approach is used, where random tracks are selected until the total
-/// duration exceds the target time
-pub fn random_list(mut unused: Vec<(PathBuf, Duration)>, target: Duration) -> Playlist {
-    let mut rng = thread_rng();
-    let mut used: Vec<(PathBuf, Duration)> = Vec::new();
-    let mut used_duration = Duration::ZERO;
-
-    while used_duration < target {
-        let random_index = rng.gen_range(0..unused.len());
-        let file = unused.remove(random_index);
-
-        used_duration += file.1;
-        used.push(file);
-    }
-
-    Playlist {
-        used,
-        used_duration,
-        unused,
-        target,
-        rng,
-    }
-}
-
 /// Recursively retrieves all supported audio files in the given directory and their duration
 ///
 /// Supported types are those that [rodio](https://crates.io/crates/rodio) implements by default:
@@ -85,6 +60,31 @@ pub struct Playlist {
 }
 
 impl Playlist {
+    /// Creates a list with the paths and durations of music files which when combined roughly match
+    /// the target duration. A naive approach is used, where random tracks are selected until the total
+    /// duration exceds the target time
+    pub fn from_random(mut unused: Vec<(PathBuf, Duration)>, target: Duration) -> Self {
+        let mut rng = thread_rng();
+        let mut used: Vec<(PathBuf, Duration)> = Vec::new();
+        let mut used_duration = Duration::ZERO;
+
+        while used_duration < target {
+            let random_index = rng.gen_range(0..unused.len());
+            let file = unused.remove(random_index);
+
+            used_duration += file.1;
+            used.push(file);
+        }
+
+        Self {
+            used,
+            used_duration,
+            unused,
+            target,
+            rng,
+        }
+    }
+
     /// Returns the number of songs in the playlist
     pub fn used_len(&self) -> usize {
         self.used.len()

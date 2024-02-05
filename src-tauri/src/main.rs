@@ -2,7 +2,7 @@
 use std::{path::PathBuf, time::Duration};
 
 mod lib;
-use lib::{get_audio_files, h_greedy, random_list};
+use lib::{get_audio_files, h_greedy, Playlist};
 
 const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
@@ -23,7 +23,7 @@ const LOOPS: usize = 1;
 fn get_playlist(time: u64, path: &str) -> Vec<String> {
     let audio_files = get_audio_files(&PathBuf::from(path));
     let duration = Duration::from_secs(time);
-    let mut playlist = random_list(audio_files, duration);
+    let mut playlist = Playlist::from_random(audio_files, duration);
 
     let depth = playlist.unused_len() * DEPTH_FACTOR / 100;
     let steps = playlist.used_len() * STEPS_FACTOR / 100;
