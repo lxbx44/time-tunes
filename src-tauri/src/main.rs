@@ -2,7 +2,11 @@
 use std::{path::PathBuf, time::Duration};
 
 mod lib;
-use lib::{get_audio_files, h_greedy, random_list, swap};
+use lib::{get_audio_files, h_greedy, Playlist};
+
+const DEPTH_FACTOR: usize = 100;
+const STEPS_FACTOR: usize = 100;
+const LOOPS: usize = 1;
 
 /// retrieves a list of music files according to the user provided settings
 ///
@@ -11,18 +15,26 @@ use lib::{get_audio_files, h_greedy, random_list, swap};
 ///  - `path` is a string representing a valid path on the filesystem
 ///
 /// # Missing fields:
-///  - `Depth` parameter (u32)
-///  - `Steps` parameter (u32)
-///  - `Loops` parameter (u8 ?)
-///  - `h` parameter (Heuristics function selector, enum? str?)
+///  - `Depth` parameter
+///  - `Steps` parameter
+///  - `Loops` parameter
+///  - `h` parameter
 #[tauri::command]
 fn get_playlist(time: u64, path: &str) -> Vec<String> {
     let audio_files = get_audio_files(&PathBuf::from(path));
     let duration = Duration::from_secs(time);
-    let random_list = random_list(audio_files, duration);
+    let mut playlist = Playlist::from_random(audio_files, duration);
 
-    // TODO: Actually implement the playlist generator
-    Vec::new()
+    let depth = playlist.unused_len() * DEPTH_FACTOR / 100;
+    let steps = playlist.used_len() * STEPS_FACTOR / 100;
+
+    for _ in 0..=LOOPS {
+        for i in 0..=steps {
+            playlist.swap(i, depth, h_greedy);
+        }
+    }
+
+    playlist.get()
 }
 
 fn main() {
