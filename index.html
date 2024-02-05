@@ -19,15 +19,16 @@
 
         <div class="confirm">
             <div class="confirm-title">
-                <h1>Selected songs:</h1>
-                <p>Total time: <span>here time</span></p>
+                <h1>Selected songs</h1>
+                <p>Input time: <span id="changetotaltime">here time</span></p>
+                <p>Real time: <span id="changerealtime">here time</span></p>
             </div>
 
             <div id="putsongshere"></div>
 
             <div class="confirm-btns">
                 <button id="confirm-ok">Continue</button>
-                <button id="confirm-stop">Cancel</button>
+                <!--<button id="confirm-stop">Cancel</button>-->
             </div>
         </div>
 
@@ -54,7 +55,7 @@
 
                     <div class="seconds-div">
                         <button type="button" id="seconds-up"><i class="fa-solid fa-chevron-up"></i></button>
-                        <input min="0" max="24" type="number" id="seconds-input" value="0" placeholder="s" required>
+                        <input min="0" max="59" type="number" id="seconds-input" value="0" placeholder="s" required>
                         <button type="button" id="seconds-down"><i class="fa-solid fa-chevron-down"></i></button>
                     </div>
 

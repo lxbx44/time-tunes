@@ -130,7 +130,7 @@ sDown?.addEventListener('click', () => {
 });
 
 function preventNonNumericInput(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
+    let inputElement = event.target as HTMLInputElement;
     inputElement.value = inputElement.value.replace(/\D/g, '0');
 }
 hTxt?.addEventListener('input', preventNonNumericInput);
@@ -139,7 +139,7 @@ sTxt?.addEventListener('input', preventNonNumericInput);
 
 
 function no_max_59(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
+    let inputElement = event.target as HTMLInputElement;
     if (inputElement.valueAsNumber > 59) {
         inputElement.value = "59";
     }
@@ -206,6 +206,28 @@ class Time implements Time {
     }
 }
 
+function formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const timeArray: string[] = [];
+
+    if (hours > 0) {
+        timeArray.push(`${hours}h`);
+    }
+
+    if (minutes > 0) {
+        timeArray.push(`${minutes}m`);
+    }
+
+    if (remainingSeconds > 0) {
+        timeArray.push(`${remainingSeconds}s`);
+    }
+
+    return timeArray.join(' ');
+}
+
 let form: HTMLFormElement | null = document.querySelector('#main-form');
 
 form?.addEventListener('submit', (event: Event) => {
@@ -247,19 +269,29 @@ form?.addEventListener('submit', (event: Event) => {
         invoke('get_playlist', {
             time: duration.to_seconds(),
             path: folderPath,
-        }).then((s: string[] | unknown) => {
-            let songs: string[] = s as string[];
+        }).then((s: [Array<[string, string]>, number] | unknown) => {
+            let [songs_info, total_time] = s as [[string, string][], number];
 
-            let songsDiv: HTMLDivElement | null = document.querySelector('#putsongshere');
-            let songsDivParent: HTMLDivElement | null = document.querySelector('.confirm');
+            let songs: string[] = songs_info.map((pair: [string, string]) => pair[1])
+
             if (loader) {
                 loader.style.display = 'none';
             }
 
+            let songsDiv: HTMLDivElement | null = document.querySelector('#putsongshere');
+            let songsDivParent: HTMLDivElement | null = document.querySelector('.confirm');
+            let timespan: HTMLSpanElement | null = document.querySelector('#changetotaltime');
+            let timespanreal: HTMLSpanElement | null = document.querySelector('#changerealtime');
+
+            if (timespan && timespanreal) {
+                timespan.textContent = formatTime(total_time);
+                timespanreal.textContent = formatTime(duration.to_seconds());
+            }
+
             let n: number = 1;
             songs.forEach((song: string) => {
-                const p = document.createElement('p');
-                p.textContent = `${n}. ${song.split('/').slice(-1)[0]}`;
+                let p = document.createElement('p');
+                p.textContent = `${n}. ${song}`;
                 songsDiv?.appendChild(p);
                 n++;
             });
