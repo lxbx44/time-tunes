@@ -68,7 +68,7 @@ impl Playlist {
         let mut used: Vec<(PathBuf, Duration)> = Vec::new();
         let mut used_duration = Duration::ZERO;
 
-        while used_duration < target {
+        while used_duration < target && !unused.is_empty() {
             let random_index = rng.gen_range(0..unused.len());
             let file = unused.remove(random_index);
 
