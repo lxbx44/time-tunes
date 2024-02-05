@@ -94,7 +94,7 @@ impl Playlist {
     pub fn unused_len(&self) -> usize {
         self.unused.len()
     }
-    
+
     // TODO: Implement actual metadata name checking and clean up this mess
     /// Returns a list with the paths of the songs in the playlist, their name and the total
     /// duration of the playlist in seconds
