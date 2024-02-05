@@ -8,7 +8,8 @@ const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
 const LOOPS: usize = 1;
 
-/// retrieves a list of music files according to the user provided settings
+/// retrieves a list of music files according to the user provided settings and the total duration
+/// of the of the list
 ///
 /// # Assumptions
 ///  - `time` is an unsigned integer representing seconds
@@ -19,9 +20,8 @@ const LOOPS: usize = 1;
 ///  - `Steps` parameter
 ///  - `Loops` parameter
 ///  - `h` parameter
-
 #[tauri::command]
-fn get_playlist(time: u64, path: &str) -> Vec<String> {
+fn get_playlist(time: u64, path: &str) -> (Vec<(String, String)>, u64) {
     let audio_files = get_audio_files(&PathBuf::from(path));
     let duration = Duration::from_secs(time);
     let mut playlist = Playlist::from_random(audio_files, duration);

@@ -94,16 +94,26 @@ impl Playlist {
     pub fn unused_len(&self) -> usize {
         self.unused.len()
     }
-
-    /// Returns a list with the paths of the songs in the playlist
+    
+    // TODO: Implement actual metadata name checking and clean up this mess
+    /// Returns a list with the paths of the songs in the playlist, their name and the total
+    /// duration of the playlist in seconds
     ///
     /// # Panics
     /// - Panics if a path contains non UTF-8 glyphs
-    pub fn get(&self) -> Vec<String> {
-        self.used
-            .par_iter()
-            .map(|s| s.0.to_str().unwrap().to_owned())
-            .collect()
+    pub fn get(&self) -> (Vec<(String, String)>, u64) {
+        (
+            self.used
+                .par_iter()
+                .map(|s| {
+                    (
+                        s.0.to_str().unwrap().to_owned(),
+                        s.0.file_name().unwrap().to_str().unwrap().to_owned(),
+                    )
+                })
+                .collect(),
+            self.used_duration.as_secs(),
+        )
     }
 
     /// Attempts to swap the selected audio track `depth` times accortding to the provided heuristics
