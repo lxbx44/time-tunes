@@ -299,6 +299,20 @@ form?.addEventListener('submit', (event: Event) => {
             if (songsDivParent) {
                 songsDivParent.style.display = 'grid';
             }
+
+            let cancelBtn: HTMLButtonElement | null = document.querySelector('#confirm-stop');
+            let continueBtn: HTMLButtonElement | null = document.querySelector('#confirm-ok');
+
+            cancelBtn?.addEventListener('click', () => {
+                window.location.reload();
+            });
+
+            continueBtn?.addEventListener('click', () => {
+                if (songsDivParent) {
+                    songsDivParent.style.display = 'none';
+                }
+
+            });
             
         });
     }, 500);

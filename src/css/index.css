@@ -4,6 +4,7 @@
   padding: 0;
   font-family: "Raleway", sans-serif;
   font-weight: 500;
+  user-select: none;
 }
 * input::-webkit-outer-spin-button,
 * input::-webkit-inner-spin-button {
@@ -126,6 +127,79 @@
 }
 .confirm .confirm-btns #confirm-ok {
   padding: 1rem 1.5rem;
+}
+
+.display {
+  height: 100vh;
+  width: 100vw;
+  display: none;
+  grid-template-columns: 1fr;
+  grid-template-rows: 55% 15% 30%;
+  justify-items: center;
+}
+.display img {
+  align-self: flex-end;
+  width: 40vw;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+.display .display-info {
+  height: 100%;
+  width: 100%;
+  align-self: flex-start;
+  text-align: center;
+}
+.display .display-info h2 {
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+}
+.display .display-info h4 {
+  padding-bottom: 0.3rem;
+}
+.display .display-bar {
+  height: 100%;
+  width: 100%;
+  align-self: flex-start;
+  display: grid;
+  justify-items: center;
+}
+.display .display-bar .db-container {
+  height: 2rem;
+  width: 60vw;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 50% 50%;
+}
+.display .display-bar .db-container p {
+  font-size: 0.8rem;
+}
+.display .display-bar .db-container #d-cur-time {
+  justify-self: flex-start;
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
+.display .display-bar .db-container #d-total-time {
+  justify-self: flex-end;
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+.display .display-bar .db-container .dbc-bar {
+  grid-row: 2/3;
+  grid-column: 1/3;
+  display: grid;
+  align-items: flex-end;
+}
+.display .display-bar .db-container .dbc-bar .dbcb-full {
+  height: 50%;
+  width: 100%;
+  background-color: var(--background2);
+  border-radius: 20px;
+}
+.display .display-bar .db-container .dbc-bar .dbcb-full #bar-to-fill {
+  height: 100%;
+  border-radius: 20px;
+  background-color: var(--primary);
+  width: 28%;
 }
 
 .container {

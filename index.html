@@ -20,15 +20,40 @@
         <div class="confirm">
             <div class="confirm-title">
                 <h1>Selected songs</h1>
-                <p>Input time: <span id="changetotaltime">here time</span></p>
-                <p>Real time: <span id="changerealtime">here time</span></p>
+                <p>Input time: <span id="changerealtime">here time</span></p>
+                <p>Playlist total time: <span id="changetotaltime">here time</span></p>
             </div>
 
             <div id="putsongshere"></div>
 
             <div class="confirm-btns">
                 <button id="confirm-ok">Continue</button>
-                <!--<button id="confirm-stop">Cancel</button>-->
+                <button id="confirm-stop">Cancel</button>
+            </div>
+        </div>
+
+        <div class="display">
+            <img id="d-album" src="src/img/album.png">
+
+            <div class="display-info">
+                <h2 id="d-title">Song Name :3</h2>
+                <h4 id="d-artist">The Artist</h4>
+                <h5 id="d-album">Album name</h5>
+            </div>
+
+            <div class="display-bar">
+                <div class="db-container">
+                    <p id="d-cur-time">1:05</p>
+                    <p id="d-total-time">3:22</p>
+
+                    <div class="dbc-bar">
+                        <div class="dbcb-full">
+                            <div id="bar-to-fill">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
