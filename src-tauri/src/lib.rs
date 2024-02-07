@@ -65,7 +65,7 @@ pub struct Metadata {
     pub title: String,
     pub artist: String,
     pub album: String,
-    pub picture: Result<Box<[u8]>, LoftyError>,
+    pub picture: Option<Box<[u8]>>,
     pub mimetype: String,
 }
 
@@ -110,16 +110,18 @@ impl Metadata {
         }
 
         let mut mimetype = DEFAULT.to_owned();
-        let picture: Result<Box<[u8]>, LoftyError> = File::open(path).map_or_else(
-            |_| Err(LoftyError::new(ErrorKind::NotAPicture)),
-            |mut reader| match Picture::from_reader(&mut reader) {
-                Ok(p) => {
-                    mimetype = p
-                        .mime_type()
-                        .map_or(DEFAULT.to_owned(), |m| m.as_str().to_owned());
-                    Ok(p.data().into())
-                }
-                Err(err) => Err(err),
+        let picture = File::open(path).map_or_else(
+            |_| None,
+            |mut reader| {
+                Picture::from_reader(&mut reader).map_or_else(
+                    |_| None,
+                    |p| {
+                        mimetype = p
+                            .mime_type()
+                            .map_or(DEFAULT.to_owned(), |m| m.as_str().to_owned());
+                        Some(p.data().into())
+                    },
+                )
             },
         );
 
