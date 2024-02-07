@@ -312,6 +312,39 @@ form?.addEventListener('submit', (event: Event) => {
                     songsDivParent.style.display = 'none';
                 }
 
+                let songs_path: string[] = songs_info.map((pair: [string, string]) => pair[0]);
+
+                songs_path.forEach((song: string) => {
+                    invoke('get_metadata', {song})
+                        .then((metadata) => {
+                            console.log(metadata);
+                            let [title, artist, album, picture, mimetype] = metadata as [string, string, string, Uint8Array | null, string];
+                            let base64Image = picture ? btoa(String.fromCharCode.apply(null, Array.from(picture))) : '';
+
+                            let img: HTMLImageElement | null = document.querySelector('#d-album');
+                            if (img) {
+                                img.src = `data:${mimetype};base64,${base64Image}`;
+                            }
+
+                            let hTitle: HTMLElement | null = document.querySelector('#d-title');
+                            if (hTitle) {
+                                hTitle.textContent = title;
+                            }
+
+                            let hArtist: HTMLElement | null = document.querySelector('#d-artist');
+                            if (hArtist) {
+                                hArtist.textContent = artist;
+                            }
+
+                            let hAlbum: HTMLElement | null = document.querySelector('#d-album');
+                            if (hAlbum) {
+                                hAlbum.textContent = album;
+                            }
+                        })
+
+                    setTimeout(() => {}, 3000);
+                });
+
             });
             
         });

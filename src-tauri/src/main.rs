@@ -40,8 +40,16 @@ fn get_playlist(time: u64, path: &str) -> (Vec<(String, String)>, u64) {
 
 /// Tauri wrapper for `lib::Metadata::from_path()`
 #[tauri::command]
-fn get_metadata(path: &str) -> Metadata {
-    Metadata::from_path(&PathBuf::from(path))
+fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String) {
+    let metadata: Metadata = Metadata::from_path(&PathBuf::from(path));
+
+    (
+        metadata.title,
+        metadata.artist,
+        metadata.album,
+        metadata.picture.map(|p| p.into_vec()),
+        metadata.mimetype,
+    )
 }
 
 fn main() {
