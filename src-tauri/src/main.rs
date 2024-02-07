@@ -2,7 +2,7 @@
 use std::{path::PathBuf, time::Duration};
 
 mod lib;
-use lib::{get_audio_files, h_greedy, Playlist};
+use lib::{get_audio_files, h_greedy, Metadata, Playlist};
 
 const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
@@ -36,6 +36,12 @@ fn get_playlist(time: u64, path: &str) -> (Vec<(String, String)>, u64) {
     }
 
     playlist.get()
+}
+
+/// Tauri wrapper for `lib::Metadata::from_path()`
+#[tauri::command]
+fn get_metadata(path: &str) -> Metadata {
+    Metadata::from_path(&PathBuf::from(path))
 }
 
 fn main() {
