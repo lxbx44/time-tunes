@@ -46,7 +46,10 @@ fn get_metadata(path: &str) -> Metadata {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_playlist])
+        .invoke_handler(tauri::generate_handler![
+                        get_playlist,
+                        get_metadata
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
