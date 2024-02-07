@@ -1,13 +1,25 @@
 use std::{
+    fs::File,
     path::{Path, PathBuf},
     result::Result,
     time::Duration,
 };
 
-use lofty::{read_from_path, AudioFile};
+use lofty::{
+    error::ErrorKind, read_from_path, AudioFile, ItemKey, LoftyError, Picture, TagItem,
+    TaggedFileExt,
+};
 use rand::{rngs::ThreadRng, seq::SliceRandom, thread_rng, Rng};
 use rayon::prelude::*;
 use walkdir::{DirEntry, WalkDir};
+
+/// Returns the extension of the file if any
+fn get_extension(path: &Path) -> Option<&str> {
+    if let Some(Some(extension)) = path.extension().map(|ext| ext.to_str()) {
+        return Some(extension);
+    }
+    None
+}
 
 /// Checks if a given path points to a supported audio file type
 fn is_audio(entry: &DirEntry) -> bool {
@@ -18,7 +30,7 @@ fn is_audio(entry: &DirEntry) -> bool {
         return false;
     }
 
-    if let Some(Some(extension)) = entry.path().extension().map(|ext| ext.to_str()) {
+    if let Some(extension) = get_extension(entry.path()) {
         if FORMATS.contains(&extension) {
             return true;
         }
@@ -47,6 +59,78 @@ pub fn get_audio_files(path: &Path) -> Vec<(PathBuf, Duration)> {
             (path, file_duration)
         })
         .collect()
+}
+
+pub struct Metadata {
+    pub title: String,
+    pub artist: String,
+    pub album: String,
+    pub picture: Result<Box<[u8]>, LoftyError>,
+    pub mimetype: String,
+}
+
+impl Metadata {
+    /// Gets the title, artist, album name, picture and picture mimetype from the provided path
+    pub fn from_path(path: &PathBuf) -> Self {
+        const DEFAULT: &str = "Unknown";
+
+        let ext = get_extension(path).unwrap_or_default();
+        // The title defaults to the file name (if it is valid, otherwise it's "Unknown")
+        let mut title = path
+            .file_name()
+            .and_then(|f| f.to_str())
+            .and_then(|f| f.strip_prefix(ext))
+            .unwrap_or(DEFAULT)
+            .to_owned();
+
+        let mut artist = DEFAULT.to_owned();
+        let mut album = DEFAULT.to_owned();
+
+        if let Ok(Some(tag)) = read_from_path(path).map(|t| t.first_tag().cloned()) {
+            artist = tag
+                .get(&ItemKey::TrackArtist)
+                .map(TagItem::value)
+                .and_then(|a| a.text())
+                .unwrap_or(DEFAULT)
+                .to_owned();
+            album = tag
+                .get(&ItemKey::AlbumTitle)
+                .map(TagItem::value)
+                .and_then(|a| a.text())
+                .unwrap_or(DEFAULT)
+                .to_owned();
+            // If a title tag exists, replace the file name with it;
+            if let Some(t) = tag
+                .get(&ItemKey::TrackTitle)
+                .map(TagItem::value)
+                .and_then(|a| a.text())
+            {
+                title = t.to_owned();
+            }
+        }
+
+        let mut mimetype = DEFAULT.to_owned();
+        let picture: Result<Box<[u8]>, LoftyError> = File::open(path).map_or_else(
+            |_| Err(LoftyError::new(ErrorKind::NotAPicture)),
+            |mut reader| match Picture::from_reader(&mut reader) {
+                Ok(p) => {
+                    mimetype = p
+                        .mime_type()
+                        .map_or(DEFAULT.to_owned(), |m| m.as_str().to_owned());
+                    Ok(p.data().into())
+                }
+                Err(err) => Err(err),
+            },
+        );
+
+        Self {
+            title,
+            artist,
+            album,
+            picture,
+            mimetype,
+        }
+    }
 }
 
 type Heuristics = fn(Duration, Duration, Duration) -> bool;
