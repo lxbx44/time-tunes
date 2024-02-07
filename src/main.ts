@@ -315,10 +315,9 @@ form?.addEventListener('submit', (event: Event) => {
                 let songs_path: string[] = songs_info.map((pair: [string, string]) => pair[0]);
 
                 songs_path.forEach((song: string) => {
-                    invoke('get_metadata', {song})
+                    invoke('get_metadata', {path: song})
                         .then((metadata) => {
-                            console.log(metadata);
-                            let [title, artist, album, picture, mimetype] = metadata as [string, string, string, Uint8Array | null, string];
+                            let [title, artist, album, picture, mimetype/*,total_time*/] = metadata as [string, string, string, Uint8Array | null, string/*,number*/];
                             let base64Image = picture ? btoa(String.fromCharCode.apply(null, Array.from(picture))) : '';
 
                             let img: HTMLImageElement | null = document.querySelector('#d-album');
@@ -336,13 +335,24 @@ form?.addEventListener('submit', (event: Event) => {
                                 hArtist.textContent = artist;
                             }
 
-                            let hAlbum: HTMLElement | null = document.querySelector('#d-album');
+                            let hAlbum: HTMLElement | null = document.querySelector('d-album');
                             if (hAlbum) {
                                 hAlbum.textContent = album;
                             }
-                        })
+    
+                            /*
+                            let dTotal_time: HTMLElement | null = document.querySelector('#d-total-time');
+                            if (dTotal_time) {
+                                dTotal_time.textContent = total_time;
+                            }
+                            */
 
-                    setTimeout(() => {}, 3000);
+
+                            let display: HTMLDivElement | null = document.querySelector('.display');
+                            if (display) {
+                                display.style.display = 'grid';
+                            }
+                        })
                 });
 
             });
