@@ -47,7 +47,7 @@ fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String)
         metadata.title,
         metadata.artist,
         metadata.album,
-        metadata.picture.map(|p| p.into_vec()),
+        metadata.picture,
         metadata.mimetype,
     )
 }
