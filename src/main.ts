@@ -270,9 +270,7 @@ form?.addEventListener('submit', (event: Event) => {
             time: duration.to_seconds(),
             path: folderPath,
         }).then((s: [Array<[string, string]>, number] | unknown) => {
-            let [songs_info, total_time] = s as [[string, string][], number];
-
-            let songs: string[] = songs_info.map((pair: [string, string]) => pair[1])
+            let [songs_path, total_time] = s as [string[], number];
 
             if (loader) {
                 loader.style.display = 'none';
@@ -289,9 +287,9 @@ form?.addEventListener('submit', (event: Event) => {
             }
 
             let n: number = 1;
-            songs.forEach((song: string) => {
+            songs_path.forEach((song: string) => {
                 let p = document.createElement('p');
-                p.textContent = `${n}. ${song}`;
+                p.textContent = `${n}. ${song.split('/').slice(-1)[0]}`;
                 songsDiv?.appendChild(p);
                 n++;
             });
@@ -312,17 +310,19 @@ form?.addEventListener('submit', (event: Event) => {
                     songsDivParent.style.display = 'none';
                 }
 
-                let songs_path: string[] = songs_info.map((pair: [string, string]) => pair[0]);
-
                 songs_path.forEach((song: string) => {
                     invoke('get_metadata', {path: song})
                         .then((metadata) => {
-                            let [title, artist, album, picture, mimetype/*,total_time*/] = metadata as [string, string, string, Uint8Array | null, string/*,number*/];
+                            let [title, artist, album, picture, mimetype, total_time] = metadata as [string, string, string, Uint8Array | null, string, number];
                             let base64Image = picture ? btoa(String.fromCharCode.apply(null, Array.from(picture))) : '';
 
                             let img: HTMLImageElement | null = document.querySelector('#d-album');
                             if (img) {
-                                img.src = `data:${mimetype};base64,${base64Image}`;
+                                if (picture === null) {
+                                    img.src = 'src/img/album.png';
+                                } else {
+                                    img.src = `data:${mimetype};base64,${base64Image}`;
+                                }
                             }
 
                             let hTitle: HTMLElement | null = document.querySelector('#d-title');
@@ -335,17 +335,37 @@ form?.addEventListener('submit', (event: Event) => {
                                 hArtist.textContent = artist;
                             }
 
-                            let hAlbum: HTMLElement | null = document.querySelector('d-album');
+                            let hAlbum: HTMLElement | null = document.querySelector('#d-album');
                             if (hAlbum) {
                                 hAlbum.textContent = album;
                             }
     
-                            /*
                             let dTotal_time: HTMLElement | null = document.querySelector('#d-total-time');
                             if (dTotal_time) {
-                                dTotal_time.textContent = total_time;
+                                function formatToTimeDots(t: number): string {
+                                    const hours = Math.floor(t / 3600);
+                                    const minutes = Math.floor((t % 3600) / 60);
+                                    const remainingSeconds = t % 60;
+
+                                    const timeArray: string[] = [];
+
+                                    if (hours > 0) {
+                                        timeArray.push(`${hours}`);
+                                    }
+
+                                    if (minutes > 0) {
+                                        timeArray.push(`${minutes}`);
+                                    }
+
+                                    if (remainingSeconds > 0) {
+                                        timeArray.push(`${remainingSeconds}`);
+                                    }
+
+                                    return timeArray.join(':');
+                                }
+
+                                dTotal_time.textContent = formatToTimeDots(total_time);
                             }
-                            */
 
 
                             let display: HTMLDivElement | null = document.querySelector('.display');
