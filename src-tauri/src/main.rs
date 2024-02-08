@@ -4,8 +4,13 @@ use std::{path::PathBuf, time::Duration};
 mod lib;
 use lib::{get_audio_files, h_greedy, Metadata, Playlist};
 
+/// number from 1 to 100
 const DEPTH_FACTOR: usize = 100;
+
+/// number from 1 to 100
 const STEPS_FACTOR: usize = 100;
+
+/// max number -> 2^53 = 9007199254740992
 const LOOPS: usize = 1;
 
 /// retrieves a list of music files according to the user provided settings and the total duration
