@@ -187,16 +187,11 @@ impl Playlist {
     ///
     /// # Panics
     /// - Panics if a path contains non UTF-8 glyphs
-    pub fn get(&self) -> (Vec<(String, String)>, u64) {
+    pub fn get(&self) -> (Vec<String>, u64) {
         (
             self.used
                 .par_iter()
-                .map(|s| {
-                    (
-                        s.0.to_str().unwrap().to_owned(),
-                        s.0.file_name().unwrap().to_str().unwrap().to_owned(),
-                    )
-                })
+                .map(|s| s.0.to_str().unwrap().to_owned())
                 .collect(),
             self.used_duration.as_secs(),
         )
