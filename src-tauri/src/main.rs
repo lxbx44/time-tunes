@@ -21,7 +21,7 @@ const LOOPS: usize = 1;
 ///  - `Loops` parameter
 ///  - `h` parameter
 #[tauri::command]
-fn get_playlist(time: u64, path: &str) -> (Vec<(String, String)>, u64) {
+fn get_playlist(time: u64, path: &str) -> (Vec<String>, u64) {
     let audio_files = get_audio_files(&PathBuf::from(path));
     let duration = Duration::from_secs(time);
     let mut playlist = Playlist::from_random(audio_files, duration);
@@ -40,24 +40,21 @@ fn get_playlist(time: u64, path: &str) -> (Vec<(String, String)>, u64) {
 
 /// Tauri wrapper for `lib::Metadata::from_path()`
 #[tauri::command]
-fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String) {
-    let metadata: Metadata = Metadata::from_path(&PathBuf::from(path));
-
+fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String, u64) {
+    let metadata: Metadata = Metadata::from(PathBuf::from(path));
     (
         metadata.title,
         metadata.artist,
         metadata.album,
         metadata.picture,
         metadata.mimetype,
+        metadata.duration,
     )
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![
-                        get_playlist,
-                        get_metadata
-        ])
+        .invoke_handler(tauri::generate_handler![get_playlist, get_metadata])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
