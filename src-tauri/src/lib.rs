@@ -5,10 +5,7 @@ use std::{
     time::Duration,
 };
 
-use lofty::{
-    error::ErrorKind, read_from_path, AudioFile, ItemKey, LoftyError, Picture, TagItem,
-    TaggedFileExt,
-};
+use lofty::{read_from_path, AudioFile, ItemKey, Picture, Tag, TagItem, TaggedFileExt};
 use rand::{rngs::ThreadRng, seq::SliceRandom, thread_rng, Rng};
 use rayon::prelude::*;
 use walkdir::{DirEntry, WalkDir};
@@ -65,72 +62,122 @@ pub struct Metadata {
     pub title: String,
     pub artist: String,
     pub album: String,
-    pub picture: Option<Box<[u8]>>,
+    pub picture: Option<Vec<u8>>,
     pub mimetype: String,
+    pub duration: u64,
 }
 
-impl Metadata {
-    /// Gets the title, artist, album name, picture and picture mimetype from the provided path
-    pub fn from_path(path: &PathBuf) -> Self {
-        const DEFAULT: &str = "Unknown";
+#[derive(Default)]
+struct MetadataBuilder {
+    path: PathBuf,
+    tag: Option<Tag>,
+    title: Option<String>,
+    artist: Option<String>,
+    album: Option<String>,
+    picture: Option<Vec<u8>>,
+    mimetype: Option<String>,
+    duration: Option<u64>,
+}
 
-        let ext = get_extension(path).unwrap_or_default();
-        // The title defaults to the file name (if it is valid, otherwise it's "Unknown")
-        let mut title = path
-            .file_name()
-            .and_then(|f| f.to_str())
-            .and_then(|f| f.strip_prefix(ext))
-            .unwrap_or(DEFAULT)
-            .to_owned();
+impl From<PathBuf> for Metadata {
+    fn from(value: PathBuf) -> Self {
+        let tag = read_from_path(&value)
+            .map(|t| t.first_tag().cloned())
+            .ok()
+            .flatten();
 
-        let mut artist = DEFAULT.to_owned();
-        let mut album = DEFAULT.to_owned();
+        let mut builder = MetadataBuilder {
+            path: value,
+            tag,
+            ..Default::default()
+        };
+        builder.title().artist().album().picture().duration();
+        builder.build()
+    }
+}
 
-        if let Ok(Some(tag)) = read_from_path(path).map(|t| t.first_tag().cloned()) {
-            artist = tag
-                .get(&ItemKey::TrackArtist)
+impl MetadataBuilder {
+    /// Retrieves the value of the provided tag type from tne audio file's metadata
+    fn get_tag(&self, tag_type: &ItemKey) -> Option<String> {
+        self.tag.as_ref().map_or(None, |tag| {
+            tag.get(tag_type)
                 .map(TagItem::value)
                 .and_then(|a| a.text())
-                .unwrap_or(DEFAULT)
-                .to_owned();
-            album = tag
-                .get(&ItemKey::AlbumTitle)
-                .map(TagItem::value)
-                .and_then(|a| a.text())
-                .unwrap_or(DEFAULT)
-                .to_owned();
-            // If a title tag exists, replace the file name with it;
-            if let Some(t) = tag
-                .get(&ItemKey::TrackTitle)
-                .map(TagItem::value)
-                .and_then(|a| a.text())
-            {
-                title = t.to_owned();
-            }
-        }
+                .map(|a| a.to_owned())
+        })
+    }
 
-        let mut mimetype = DEFAULT.to_owned();
-        let picture = File::open(path).map_or_else(
+    /// Sets `self.title` which is either the title of the song found in the metadata of the audio
+    /// file or the file name if the previous does not exist
+    fn title(&mut self) -> &mut Self {
+        let ext = get_extension(&self.path).unwrap_or_default();
+        self.title = if let Some(title) = self.get_tag(&ItemKey::TrackTitle) {
+            Some(title)
+        } else {
+            self.path
+                .file_name()
+                .and_then(|f| f.to_str())
+                .and_then(|f| f.strip_prefix(ext))
+                .map(|t| t.to_owned())
+        };
+
+        self
+    }
+
+    /// Sets `self.artist` which is the name(s) of the artist(s) found in the metadata of the audio
+    /// file
+    fn artist(&mut self) -> &mut Self {
+        self.artist = self.get_tag(&ItemKey::TrackArtist);
+        self
+    }
+
+    /// Sets `self.album` which is the name of the album found in the metadata of the audio file
+    fn album(&mut self) -> &mut Self {
+        self.album = self.get_tag(&ItemKey::AlbumTitle);
+        self
+    }
+
+    /// Sets
+    ///  - `self.picture`, which is a collection of all the bytes of the image contained within the
+    ///  audio file
+    ///  - `self.mimetype`, which is the encoding of the image, needed to be able to rebuild it
+    ///
+    ///  TODO: Debug why it returns none even if the file contains a valid image
+    fn picture(&mut self) -> &mut Self {
+        self.picture = File::open(&self.path).map_or_else(
             |_| None,
             |mut reader| {
                 Picture::from_reader(&mut reader).map_or_else(
                     |_| None,
                     |p| {
-                        mimetype = p
-                            .mime_type()
-                            .map_or(DEFAULT.to_owned(), |m| m.as_str().to_owned());
+                        self.mimetype = p.mime_type().map(|m| m.as_str().to_owned());
                         Some(p.data().into())
                     },
                 )
             },
         );
+        self
+    }
 
-        Self {
-            title,
-            artist,
-            album,
-            picture,
-            mimetype,
+    /// Sets `self.duration` which is the duration of the track in seconds
+    fn duration(&mut self) -> &mut Self {
+        self.duration = read_from_path(&self.path)
+            .ok()
+            .map(|d| d.properties().duration().as_secs());
+        self
+    }
+
+    /// Builds the `Metadata` struct replacing any `None` with "Unknown" or the default of the
+    /// type
+    fn build(self) -> Metadata {
+        let default = String::from("Unknown");
+        Metadata {
+            title: self.title.unwrap_or_else(|| default.clone()),
+            artist: self.artist.unwrap_or_else(|| default.clone()),
+            album: self.album.unwrap_or_else(|| default.clone()),
+            picture: self.picture,
+            mimetype: self.mimetype.unwrap_or(default),
+            duration: self.duration.unwrap_or_default(),
         }
     }
 }
@@ -187,16 +234,11 @@ impl Playlist {
     ///
     /// # Panics
     /// - Panics if a path contains non UTF-8 glyphs
-    pub fn get(&self) -> (Vec<(String, String)>, u64) {
+    pub fn get(&self) -> (Vec<String>, u64) {
         (
             self.used
                 .par_iter()
-                .map(|s| {
-                    (
-                        s.0.to_str().unwrap().to_owned(),
-                        s.0.file_name().unwrap().to_str().unwrap().to_owned(),
-                    )
-                })
+                .map(|s| s.0.to_str().unwrap().to_owned())
                 .collect(),
             self.used_duration.as_secs(),
         )
