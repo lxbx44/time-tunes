@@ -139,6 +139,7 @@
 }
 .display img {
   align-self: flex-end;
+  max-height: 40vh;
   width: 40vw;
   border-radius: 10px;
   margin-bottom: 2rem;
