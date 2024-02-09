@@ -1,34 +1,35 @@
 use std::{
-    fs::File,
+    borrow::ToOwned,
     path::{Path, PathBuf},
     result::Result,
     time::Duration,
 };
 
-use lofty::{read_from_path, AudioFile, ItemKey, Picture, Tag, TagItem, TaggedFileExt};
+use lofty::{read_from_path, AudioFile, ItemKey, Tag, TagItem, TaggedFileExt};
 use rand::{rngs::ThreadRng, seq::SliceRandom, thread_rng, Rng};
 use rayon::prelude::*;
 use walkdir::{DirEntry, WalkDir};
 
 /// Returns the extension of the file if any
-fn get_extension(path: &Path) -> Option<&str> {
-    if let Some(Some(extension)) = path.extension().map(|ext| ext.to_str()) {
-        return Some(extension);
-    }
-    None
+fn get_extension(path: &Path) -> Option<String> {
+    path.extension().and_then(|ext| ext.to_str()).map(|ext| {
+        let mut ext = ext.to_owned();
+        ext.insert(0, '.');
+        ext
+    })
 }
 
 /// Checks if a given path points to a supported audio file type
 fn is_audio(entry: &DirEntry) -> bool {
     // Supported audio file formats
-    const FORMATS: [&str; 4] = ["mp3", "wav", "ogg", "flac"];
+    const FORMATS: [&str; 4] = [".mp3", ".wav", ".ogg", ".flac"];
 
     if !entry.file_type().is_file() {
         return false;
     }
 
     if let Some(extension) = get_extension(entry.path()) {
-        if FORMATS.contains(&extension) {
+        if FORMATS.contains(&extension.as_str()) {
             return true;
         }
     }
@@ -99,11 +100,11 @@ impl From<PathBuf> for Metadata {
 impl MetadataBuilder {
     /// Retrieves the value of the provided tag type from tne audio file's metadata
     fn get_tag(&self, tag_type: &ItemKey) -> Option<String> {
-        self.tag.as_ref().map_or(None, |tag| {
+        self.tag.as_ref().and_then(|tag| {
             tag.get(tag_type)
                 .map(TagItem::value)
                 .and_then(|a| a.text())
-                .map(|a| a.to_owned())
+                .map(ToOwned::to_owned)
         })
     }
 
@@ -117,8 +118,8 @@ impl MetadataBuilder {
             self.path
                 .file_name()
                 .and_then(|f| f.to_str())
-                .and_then(|f| f.strip_prefix(ext))
-                .map(|t| t.to_owned())
+                .and_then(|f| f.strip_suffix(&ext))
+                .map(ToOwned::to_owned)
         };
 
         self
@@ -144,18 +145,14 @@ impl MetadataBuilder {
     ///
     ///  TODO: Debug why it returns none even if the file contains a valid image
     fn picture(&mut self) -> &mut Self {
-        self.picture = File::open(&self.path).map_or_else(
-            |_| None,
-            |mut reader| {
-                Picture::from_reader(&mut reader).map_or_else(
-                    |_| None,
-                    |p| {
-                        self.mimetype = p.mime_type().map(|m| m.as_str().to_owned());
-                        Some(p.data().into())
-                    },
-                )
-            },
-        );
+        if let Some(tag) = &self.tag {
+            let picture = tag.pictures().first();
+            self.picture = picture.map(|p| p.data().into());
+            self.mimetype = picture
+                .and_then(|p| p.mime_type())
+                .map(|m| m.as_str().to_owned());
+        }
+
         self
     }
 
@@ -170,13 +167,13 @@ impl MetadataBuilder {
     /// Builds the `Metadata` struct replacing any `None` with "Unknown" or the default of the
     /// type
     fn build(self) -> Metadata {
-        let default = String::from("Unknown");
+        const DEFAULT: &str = "Unknown";
         Metadata {
-            title: self.title.unwrap_or_else(|| default.clone()),
-            artist: self.artist.unwrap_or_else(|| default.clone()),
-            album: self.album.unwrap_or_else(|| default.clone()),
+            title: self.title.unwrap_or_else(|| DEFAULT.to_owned()),
+            artist: self.artist.unwrap_or_else(|| DEFAULT.to_owned()),
+            album: self.album.unwrap_or_else(|| DEFAULT.to_owned()),
             picture: self.picture,
-            mimetype: self.mimetype.unwrap_or(default),
+            mimetype: self.mimetype.unwrap_or(DEFAULT.to_owned()),
             duration: self.duration.unwrap_or_default(),
         }
     }
