@@ -1,6 +1,6 @@
 [package]
 name = "src_tauri"
-version = "0.2.0"
+version = "0.2.1"
 description = "Make the perfect playlist for any duration"
 authors = ["Aria", "Slushee"]
 repository = "https://github.com/lxbx44/time-tunes"
