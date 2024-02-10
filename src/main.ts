@@ -319,7 +319,7 @@ form?.addEventListener('submit', (event: Event) => {
                             let img: HTMLImageElement | null = document.querySelector('#d-album');
                             if (img) {
                                 if (picture === null) {
-                                    img.src = 'src/img/album.png';
+                                    img.src = 'src/assets/default_album_cover.svg';
                                 } else {
                                     img.src = `data:${mimetype};base64,${base64Image}`;
                                 }
