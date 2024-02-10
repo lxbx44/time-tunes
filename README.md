@@ -1,5 +1,6 @@
 # Time Tunes
 ![Build](https://img.shields.io/github/actions/workflow/status/lxbx44/time-tunes/rust.yml?style=for-the-badge) ![Tauri](https://img.shields.io/badge/Built%20with%20Tauri-tauri?style=for-the-badge&logo=tauri&labelColor=282a33&color=%2324c8d8) ![License](https://img.shields.io/badge/Licenses-Apache%2C%20MIT-blue?style=for-the-badge)
+
 Make the perfect playlist for any duration.
 Why? Because you might want to 
  - Time your workouts
