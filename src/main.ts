@@ -335,7 +335,7 @@ form?.addEventListener('submit', (event: Event) => {
                                 hArtist.textContent = artist;
                             }
 
-                            let hAlbum: HTMLElement | null = document.querySelector('#d-album');
+                            let hAlbum: HTMLElement | null = document.querySelector('#d-album-name');
                             if (hAlbum) {
                                 hAlbum.textContent = album;
                             }
