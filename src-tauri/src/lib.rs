@@ -6,7 +6,7 @@ use std::{
 };
 
 use lofty::{read_from_path, AudioFile, ItemKey, Tag, TagItem, TaggedFileExt};
-use rand::{rngs::ThreadRng, seq::SliceRandom, thread_rng, Rng};
+use rand::{rngs::ThreadRng, seq::IteratorRandom, thread_rng, Rng};
 use rayon::prelude::*;
 use walkdir::{DirEntry, WalkDir};
 
@@ -179,7 +179,7 @@ impl MetadataBuilder {
     }
 }
 
-type Heuristics = fn(Duration, Duration, Duration) -> bool;
+type Heuristics = fn(Duration, Duration, Duration, Duration) -> bool;
 
 pub struct Playlist {
     used: Vec<(PathBuf, Duration)>,
@@ -248,34 +248,49 @@ impl Playlist {
     /// - `index` is contained in playlist.used
     /// - `playlist.used_duration` has been correctly calculated
     pub fn swap(&mut self, index: usize, depth: usize, h: Heuristics) -> &mut Self {
-        let swap_attempts: Vec<&(PathBuf, Duration)> =
-            self.unused.choose_multiple(&mut self.rng, depth).collect();
+        let swap_attempts: Vec<(usize, &(PathBuf, Duration))> = self
+            .unused
+            .iter()
+            .enumerate()
+            .choose_multiple(&mut self.rng, depth);
 
-        let to_swap = &self.used.remove(index);
-        self.used_duration -= to_swap.1;
+        let to_swap = (0, &self.used.remove(index));
+        let original_total = self.used_duration;
+        self.used_duration -= to_swap.1 .1;
 
-        let best_song = *swap_attempts.par_iter().reduce(
+        let best_song = swap_attempts.par_iter().reduce(
             || &to_swap,
             |best, current| {
-                let old_total = self.used_duration + best.1;
-                let new_total = self.used_duration + current.1;
+                let old_total = self.used_duration + best.1 .1;
+                let new_total = self.used_duration + current.1 .1;
 
-                if h(old_total, new_total, self.target) {
+                if h(original_total, old_total, new_total, self.target) {
                     return current;
                 }
                 best
             },
         );
 
-        self.used_duration += best_song.1;
-        self.used.insert(index, best_song.clone());
+        self.used.insert(index, best_song.1.clone());
+        self.used_duration += best_song.1 .1;
+
+        // The `to_swap` song wasn't added to the `unused` list. If it happens
+        // to be the `best_song`, we must not attempt to remove it, because it's not there
+        if best_song != &to_swap {
+            self.unused.remove(best_song.0);
+        }
 
         self
     }
 }
 
 /// Greedy, grabs the track that gets the total time the closest to target
-pub fn h_greedy(old_total: Duration, new_total: Duration, target: Duration) -> bool {
+pub fn h_greedy(
+    _original_total: Duration,
+    old_total: Duration,
+    new_total: Duration,
+    target: Duration,
+) -> bool {
     let old_total = old_total.as_secs_f64();
     let new_total = new_total.as_secs_f64();
     let target = target.as_secs_f64();
