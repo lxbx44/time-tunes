@@ -248,7 +248,7 @@ impl Playlist {
     /// - `index` is contained in playlist.used
     /// - `playlist.used_duration` has been correctly calculated
     pub fn swap(&mut self, index: usize, depth: usize, h: Heuristics) -> &mut Self {
-        let swap_attempts: Vec<(usize, &(PathBuf, Duration))> = self
+        let swap_attempts = self
             .unused
             .iter()
             .enumerate()
