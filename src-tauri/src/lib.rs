@@ -173,7 +173,7 @@ impl MetadataBuilder {
             artist: self.artist.unwrap_or_else(|| DEFAULT.to_owned()),
             album: self.album.unwrap_or_else(|| DEFAULT.to_owned()),
             picture: self.picture,
-            mimetype: self.mimetype.unwrap_or(DEFAULT.to_owned()),
+            mimetype: self.mimetype.unwrap_or_else(|| DEFAULT.to_owned()),
             duration: self.duration.unwrap_or_default(),
         }
     }
