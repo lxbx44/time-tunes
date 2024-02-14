@@ -295,8 +295,42 @@ pub fn h_greedy(
     let new_total = new_total.as_secs_f64();
     let target = target.as_secs_f64();
 
-    if (target - new_total).abs() < (target - old_total).abs() {
+    let old_diff = (target - old_total).abs();
+    let new_diff = (target - new_total).abs();
+
+    if new_diff < old_diff {
         return true;
     }
+
+    false
+}
+
+/// Will return true if
+///  - the duration is closer to the target
+///  and
+///  - the old total is further from the target than it is to the new total
+///
+/// Attempts to create a smoother convergence and better distributed length of the songs by not
+/// immediately jumping to the smallest distance to target
+pub fn h_middleground(
+    original_total: Duration,
+    old_total: Duration,
+    new_total: Duration,
+    target: Duration,
+) -> bool {
+    let original_total = original_total.as_secs_f64();
+    let old_total = old_total.as_secs_f64();
+    let new_total = new_total.as_secs_f64();
+    let target = target.as_secs_f64();
+
+    let old_diff = (target - old_total).abs();
+    let new_diff = (target - new_total).abs();
+    let original_diff = (target - original_total).abs();
+    let new_n_original_diff = (original_total - new_total).abs();
+
+    if new_diff < old_diff && new_n_original_diff <= original_diff {
+        return true;
+    }
+
     false
 }
