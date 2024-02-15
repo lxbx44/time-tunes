@@ -57,31 +57,49 @@
             </div>
         </div>
 
+
+        <div class="settings">
+            <h1>Settings</h1>
+            <div class="setting-depth">
+                <h3>DEPTH FACTOR</h3>
+                <p>// Explanation :3</p>
+                <div>
+                    <input id="depth-factor" type="range" value="100">
+                    <p id="depth-factor-num"></p>
+                </div>
+            </div>
+        </div>
+
+
+
         <div class="container">
-            <h2>TimeTunes</h2>
+            
+            <img src="src/assets/icons/settings.svg" id="open-settings">
+
+            <img class="title-img" src="src/assets/icons/title.svg">
 
             <form id="main-form">
                 <div class="timer">
                     <div class="hours-div">
-                        <button type="button" id="hours-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <img id="hours-up" class="btn-reverse" src="src/assets/icons/arrow.svg" >
                         <input type="number" id="hours-input" value="0" placeholder="h" required>
-                        <button type="button" id="hours-down"><i class="fa-solid fa-chevron-down"></i></button>
+                        <img id="hours-down" src="src/assets/icons/arrow.svg" >
                     </div>
 
                     <p>Hours</p>
 
                     <div class="minutes-div">
-                        <button type="button" id="minutes-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <img id="minutes-up" class="btn-reverse" src="src/assets/icons/arrow.svg" >
                         <input min="0" max="59" type="number" id="minutes-input" value="0" placeholder="m" required>
-                        <button type="button" id="minutes-down"><i class="fa-solid fa-chevron-down"></i></button>
+                        <img id="minutes-down" src="src/assets/icons/arrow.svg" >
                     </div>
 
                     <p>Minutes</p>
 
                     <div class="seconds-div">
-                        <button type="button" id="seconds-up"><i class="fa-solid fa-chevron-up"></i></button>
+                        <img id="seconds-up" class="btn-reverse" src="src/assets/icons/arrow.svg" >
                         <input min="0" max="59" type="number" id="seconds-input" value="0" placeholder="s" required>
-                        <button type="button" id="seconds-down"><i class="fa-solid fa-chevron-down"></i></button>
+                        <img id="seconds-down" src="src/assets/icons/arrow.svg" >
                     </div>
 
                     <p>Seconds</p>

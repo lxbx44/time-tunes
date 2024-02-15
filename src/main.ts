@@ -191,6 +191,47 @@ folderButton?.addEventListener('mouseleave', () => {
     }
 });
 
+
+
+// THINGIES TO PASS TO RUST
+
+let depthFactor: HTMLElement | null = document.querySelector('#depth-factor-num');
+
+// Settings page
+
+let settingsBtn: HTMLElement | null = document.querySelector('#open-settings');
+
+let settingsContent: HTMLElement | null = document.querySelector('.settings');
+let maincontent: HTMLElement | null = document.querySelector('.container');
+
+settingsBtn?.addEventListener('click', () => {
+    if (maincontent) {
+        maincontent.style.display = 'none';
+    }
+
+    let depthFactorSlider: HTMLInputElement | null = document.querySelector('#depth-factor');
+
+    if (depthFactor && depthFactorSlider) {
+        depthFactor.textContent = depthFactorSlider.value;
+    };
+
+
+    if (settingsContent) {
+        settingsContent.style.display = 'flex'; 
+    }
+    
+    depthFactorSlider?.addEventListener('input', () => {
+        if (depthFactor && depthFactorSlider) {
+            depthFactor.textContent = depthFactorSlider.value;
+        };
+    });
+
+
+});
+
+
+
+
 interface Time {
     hours: number,
     minutes: number,
@@ -255,7 +296,6 @@ form?.addEventListener('submit', (event: Event) => {
         return;
     }
 
-    let maincontent: HTMLElement | null = document.querySelector('.container');
     let loader: HTMLElement | null = document.querySelector('#loader');
 
     if (maincontent) {

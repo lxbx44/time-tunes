@@ -17,6 +17,7 @@
 
 :root {
   --text: #ddeaf7;
+  --text2: #8996a3;
   --background: #07121e;
   --background2: #192432;
   --primary: #88b8e3;
@@ -203,6 +204,39 @@
   width: 28%;
 }
 
+.settings {
+  height: calc(100vh - 5rem);
+  width: calc(100vw - 7rem);
+  margin: 2.5rem 3.5rem;
+  display: none;
+  flex-direction: column;
+}
+.settings h1 {
+  margin-bottom: 1rem;
+}
+.settings .setting-depth h3 {
+  margin-bottom: 0.5rem;
+}
+.settings .setting-depth p {
+  color: var(--text2);
+}
+.settings .setting-depth div {
+  display: flex;
+  align-items: center;
+}
+.settings .setting-depth div input {
+  margin: 1rem 0;
+  width: 40vw;
+}
+.settings .setting-depth div p {
+  margin-left: 1.5rem;
+  padding: 0.4rem;
+  border-radius: 10px;
+  color: var(--background);
+  background-color: var(--primary);
+  user-select: none;
+}
+
 .container {
   height: 100vh;
   width: 100vw;
@@ -211,6 +245,29 @@
   grid-template-rows: 30% 70%;
   justify-items: center;
   align-items: center;
+}
+.container #open-settings {
+  position: absolute;
+  height: 1.8rem;
+  top: 1.3rem;
+  right: 1.7rem;
+  cursor: pointer;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+}
+.container #open-settings:hover {
+  scale: 1.1;
+}
+.container #open-settings:active {
+  scale: 1.15;
+}
+.container .title-img {
+  padding-top: 6rem;
+  max-width: 60vw;
+}
+@media (max-height: 500px) {
+  .container .title-img {
+    padding-top: 0rem;
+  }
 }
 .container form {
   height: 100%;
@@ -243,18 +300,21 @@
   outline: none;
   border: none;
 }
-.container form .timer div button {
-  background-color: var(--primary);
-  padding: 0.3rem;
-  margin: 0 0.5rem;
-  border: none;
-  border-radius: 10px;
-  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+.container form .timer div .btn-reverse {
+  transform: rotate(180deg);
+  margin-right: 0.4rem;
+  margin-left: 0;
 }
-.container form .timer div button:hover {
+.container form .timer div img {
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+  margin-left: 0.4rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+.container form .timer div img:hover {
   scale: 1.1;
 }
-.container form .timer div button:active {
+.container form .timer div img:active {
   scale: 1.15;
 }
 .container form .timer p {

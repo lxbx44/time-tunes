@@ -19,6 +19,7 @@
 
 :root {
     --text: #ddeaf7;
+    --text2: #8996a3;
     --background: #07121e;
     --background2: #192432;
     --primary: #88b8e3;
@@ -230,6 +231,50 @@
     }
 }
 
+
+.settings {
+    height: calc(100vh - 5rem);
+    width: calc(100vw - 7rem);
+
+    margin: 2.5rem 3.5rem;
+
+    display: none;
+    flex-direction: column;
+
+    h1 {
+        margin-bottom: 1rem;
+    }
+
+    .setting-depth {
+        h3 {
+            margin-bottom: 0.5rem;
+        }
+        p {
+            color: var(--text2);
+        }
+
+        div {
+            display: flex;
+            align-items: center;
+
+            input {
+                margin: 1rem 0;
+                width: 40vw;
+            }
+
+            p {
+                margin-left: 1.5rem;
+                padding: 0.4rem;
+                border-radius: 10px;
+                color: var(--background);
+                background-color: var(--primary);
+                user-select: none;
+            }
+        }
+    } 
+}
+
+
 .container {
     height: 100vh;
     width: 100vw;
@@ -240,6 +285,38 @@
 
     justify-items: center;
     align-items: center;
+
+    #open-settings {
+        position: absolute;
+        height: 1.8rem;
+        
+        top: 1.3rem;
+        right: 1.7rem;
+
+        cursor: pointer;
+
+        transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+
+        &:hover {
+            scale: 1.1;
+        }
+        &:active {
+            scale: 1.15;
+        }
+    }
+
+
+    .title-img {
+        padding-top: 6rem;
+        max-width: 60vw;
+    }
+    
+    @media (max-height: 500px) {
+        .title-img {
+            padding-top: 0rem;
+        }
+    }
+
 
     form {
         height: 100%;
@@ -273,13 +350,16 @@
                         border: none;
                     }
                 }
-                button {
-                    background-color: var(--primary);
-                    padding: 0.3rem;
-                    margin: 0 0.5rem;
-                    border: none;
-                    border-radius: 10px;
+                .btn-reverse {
+                    transform: rotate(180deg);
+                    margin-right: 0.4rem;
+                    margin-left: 0;
+                }
+                img {
                     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+                    margin-left: 0.4rem;
+                    margin-right: 0.5rem;
+                    cursor: pointer;
 
                     &:hover {
                         scale: 1.1;
