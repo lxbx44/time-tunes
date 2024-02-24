@@ -1,5 +1,5 @@
 use rodio::{source::Source, Decoder, OutputStream, Sink};
-use std::{fs::File, io::BufReader, error::Error};
+use std::{error::Error, fs::File, io::BufReader};
 
 use crate::playlist::Playlist;
 
