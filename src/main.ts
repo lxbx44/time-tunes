@@ -269,6 +269,7 @@ function formatTime(seconds: number): string {
     return timeArray.join(' ');
 }
 
+
 let form: HTMLFormElement | null = document.querySelector('#main-form');
 
 form?.addEventListener('submit', (event: Event) => {
@@ -350,72 +351,77 @@ form?.addEventListener('submit', (event: Event) => {
                     songsDivParent.style.display = 'none';
                 }
 
+                invoke('play', { playlist: songs_path })
                 songs_path.forEach((song: string) => {
                     invoke('get_metadata', {path: song})
-                        .then((metadata) => {
-                            let [title, artist, album, picture, mimetype, total_time] = metadata as [string, string, string, Uint8Array | null, string, number];
+                        .then(async (metadata) => {
 
-                            let base64Image = picture 
-                                ? btoa(String.fromCharCode.apply(null, Array.from(picture))) 
-                                : '';
+                        let [title, artist, album, picture, mimetype, total_time] = metadata as [string, string, string, Uint8Array | null, string, number];
 
-                            let img: HTMLImageElement | null = document.querySelector('#d-album');
-                            if (img) {
-                                if (picture === null) {
-                                    img.src = 'src/assets/default_album_cover.svg';
-                                } else {
-                                    img.src = `data:${mimetype};base64,${base64Image}`;
-                                }
+                        let base64Image = picture ? btoa(String.fromCharCode.apply(null, Array.from(picture))) : '';
+
+                        let img: HTMLImageElement | null = document.querySelector('#d-album');
+                        if (img) {
+                            if (picture === null) {
+                                img.src = 'src/assets/default_album_cover.svg';
+                            } else {
+                                img.src = `data:${mimetype};base64,${base64Image}`;
                             }
+                        }
 
-                            let hTitle: HTMLElement | null = document.querySelector('#d-title');
-                            if (hTitle) {
-                                hTitle.textContent = title;
-                            }
+                        let hTitle: HTMLElement | null = document.querySelector('#d-title');
+                        if (hTitle) {
+                            hTitle.textContent = title;
+                        }
 
-                            let hArtist: HTMLElement | null = document.querySelector('#d-artist');
-                            if (hArtist) {
-                                hArtist.textContent = artist;
-                            }
+                        let hArtist: HTMLElement | null = document.querySelector('#d-artist');
+                        if (hArtist) {
+                            hArtist.textContent = artist;
+                        }
 
-                            let hAlbum: HTMLElement | null = document.querySelector('#d-album-name');
-                            if (hAlbum) {
-                                hAlbum.textContent = album;
-                            }
-    
-                            let dTotal_time: HTMLElement | null = document.querySelector('#d-total-time');
-                            if (dTotal_time) {
-                                function formatToTimeDots(t: number): string {
-                                    const hours = Math.floor(t / 3600);
-                                    const minutes = Math.floor((t % 3600) / 60);
-                                    const remainingSeconds = t % 60;
+                        let hAlbum: HTMLElement | null = document.querySelector('#d-album-name');
+                        if (hAlbum) {
+                            hAlbum.textContent = album;
+                        }
 
-                                    const timeArray: string[] = [];
+                        let dTotal_time: HTMLElement | null = document.querySelector('#d-total-time');
+                        if (dTotal_time) {
+                            function formatToTimeDots(t: number): string {
+                                const hours = Math.floor(t / 3600);
+                                const minutes = Math.floor((t % 3600) / 60);
+                                const remainingSeconds = t % 60;
 
-                                    if (hours > 0) {
-                                        timeArray.push(`${hours}`);
-                                    }
+                                const timeArray: string[] = [];
 
-                                    if (minutes > 0) {
-                                        timeArray.push(`${minutes}`);
-                                    }
-
-                                    if (remainingSeconds > 0) {
-                                        timeArray.push(`${remainingSeconds}`);
-                                    }
-
-                                    return timeArray.join(':');
+                                if (hours > 0) {
+                                    timeArray.push(`${hours}`);
                                 }
 
-                                dTotal_time.textContent = formatToTimeDots(total_time);
+                                if (minutes > 0) {
+                                    timeArray.push(`${minutes}`);
+                                }
+
+                                if (remainingSeconds > 0) {
+                                    timeArray.push(`${remainingSeconds}`);
+                                }
+
+                                return timeArray.join(':');
                             }
 
+                            dTotal_time.textContent = formatToTimeDots(total_time);
+                        }
 
-                            let display: HTMLDivElement | null = document.querySelector('.display');
-                            if (display) {
-                                display.style.display = 'grid';
-                            }
-                        })
+
+                        let display: HTMLDivElement | null = document.querySelector('.display');
+                        if (display) {
+                            display.style.display = 'grid';
+                        }
+
+                        ( async() => {
+                            await new Promise(resolve => setTimeout( resolve, total_time * 1000));
+                        })();
+
+                    })
                 });
             });
         })
