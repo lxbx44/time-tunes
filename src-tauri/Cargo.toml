@@ -1,16 +1,17 @@
 [package]
 name = "src_tauri"
-version = "0.2.2"
+version = "0.3.0"
 description = "Make the perfect playlist for any duration"
 authors = ["Aria", "Slushee"]
 repository = "https://github.com/lxbx44/time-tunes"
 edition = "2021"
 
 [dependencies]
-lofty = "0.18.2"
 rand = "0.8.5"
 rayon = "1.8.1"
 walkdir = "2.4.0"
+lofty = "0.18.2"
+rodio = "0.17.3"
 
 # Tauri
 tauri = { version = "1.5", features = [ "dialog-all", "shell-open"] }

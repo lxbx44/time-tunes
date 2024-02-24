@@ -1,8 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use std::{path::PathBuf, time::Duration};
 
-mod lib;
-use lib::{get_audio_files, h_greedy, Metadata, Playlist};
+mod playlist;
+use playlist::{get_audio_files, h_greedy, Metadata, Playlist};
+
+mod player;
+use player::play_playlist;
 
 const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
@@ -21,7 +24,7 @@ const LOOPS: usize = 1;
 ///  - `Loops` parameter
 ///  - `h` parameter
 #[tauri::command]
-fn get_playlist(time: u64, path: &str) -> (Vec<String>, u64) {
+async fn get_playlist(time: u64, path: &str) -> Result<(Vec<String>, u64), ()> {
     let audio_files = get_audio_files(&PathBuf::from(path));
     let duration = Duration::from_secs(time);
     let mut playlist = Playlist::from_random(audio_files, duration);
@@ -35,21 +38,28 @@ fn get_playlist(time: u64, path: &str) -> (Vec<String>, u64) {
         }
     }
 
-    playlist.get()
+    Ok(playlist.get())
 }
 
-/// Tauri wrapper for `lib::Metadata::from_path()`
+/// Tauri wrapper for `playlist::Metadata::from_path()`
 #[tauri::command]
-fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String, u64) {
+async fn get_metadata(
+    path: &str,
+) -> Result<(String, String, String, Option<Vec<u8>>, String, u64), ()> {
     let metadata: Metadata = Metadata::from(PathBuf::from(path));
-    (
+    Ok((
         metadata.title,
         metadata.artist,
         metadata.album,
-        metadata.picture,
+        metadata.picture, // Careful!
         metadata.mimetype,
         metadata.duration,
-    )
+    ))
+}
+
+#[tauri::command]
+async fn play(playlist: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+    play_playlist(playlist)
 }
 
 fn main() {
