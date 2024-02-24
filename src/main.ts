@@ -354,7 +354,10 @@ form?.addEventListener('submit', (event: Event) => {
                     invoke('get_metadata', {path: song})
                         .then((metadata) => {
                             let [title, artist, album, picture, mimetype, total_time] = metadata as [string, string, string, Uint8Array | null, string, number];
-                            let base64Image = picture ? btoa(String.fromCharCode.apply(null, Array.from(picture))) : '';
+
+                            let base64Image = picture 
+                                ? btoa(String.fromCharCode.apply(null, Array.from(picture))) 
+                                : '';
 
                             let img: HTMLImageElement | null = document.querySelector('#d-album');
                             if (img) {
@@ -414,9 +417,10 @@ form?.addEventListener('submit', (event: Event) => {
                             }
                         })
                 });
-
             });
-            
+        })
+        .catch(() => {
+            window.location.reload()
         });
     }, 500);
 });

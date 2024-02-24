@@ -1,7 +1,5 @@
-use rodio::{source::Source, Decoder, OutputStream, Sink};
+use rodio::{Decoder, OutputStream, Sink};
 use std::{error::Error, fs::File, io::BufReader};
-
-use crate::playlist::Playlist;
 
 pub fn play_playlist(playlist: Vec<String>) -> Result<(), Box<dyn Error>> {
     let (_stream, stream_handle) = OutputStream::try_default()?;

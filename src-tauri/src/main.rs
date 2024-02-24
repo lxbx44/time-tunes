@@ -58,13 +58,13 @@ async fn get_metadata(
 }
 
 #[tauri::command]
-async fn play(playlist: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
-    play_playlist(playlist)
+async fn play(playlist: Vec<String>) -> Result<(), ()> {
+    play_playlist(playlist).map_err(|_| ())
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_playlist, get_metadata])
+        .invoke_handler(tauri::generate_handler![get_playlist, get_metadata, play])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
