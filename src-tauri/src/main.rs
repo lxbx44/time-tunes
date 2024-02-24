@@ -1,8 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use std::{path::PathBuf, time::Duration};
 
-mod lib;
-use lib::{get_audio_files, h_greedy, Metadata, Playlist};
+mod playlist;
+use playlist::{get_audio_files, h_greedy, Metadata, Playlist};
 
 const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
@@ -38,7 +38,7 @@ fn get_playlist(time: u64, path: &str) -> (Vec<String>, u64) {
     playlist.get()
 }
 
-/// Tauri wrapper for `lib::Metadata::from_path()`
+/// Tauri wrapper for `playlist::Metadata::from_path()`
 #[tauri::command]
 fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String, u64) {
     let metadata: Metadata = Metadata::from(PathBuf::from(path));
@@ -46,7 +46,7 @@ fn get_metadata(path: &str) -> (String, String, String, Option<Vec<u8>>, String,
         metadata.title,
         metadata.artist,
         metadata.album,
-        metadata.picture,
+        metadata.picture, // Careful!
         metadata.mimetype,
         metadata.duration,
     )
