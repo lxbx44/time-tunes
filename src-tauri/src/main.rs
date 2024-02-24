@@ -4,6 +4,9 @@ use std::{path::PathBuf, time::Duration};
 mod playlist;
 use playlist::{get_audio_files, h_greedy, Metadata, Playlist};
 
+mod player;
+use player::play_playlist;
+
 const DEPTH_FACTOR: usize = 100;
 const STEPS_FACTOR: usize = 100;
 const LOOPS: usize = 1;
@@ -52,6 +55,11 @@ async fn get_metadata(
         metadata.mimetype,
         metadata.duration,
     ))
+}
+
+#[tauri::command]
+async fn play(playlist: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
+    play_playlist(playlist)
 }
 
 fn main() {
